@@ -54,6 +54,8 @@ namespace FMNY
                     // If user found
                     if (user.Equals(currUser) && pass.Equals(currPass)) {
                         found = true;
+                        Session["username"] = user;
+                        Session["userType"] = viewName[i];
                         Response.Redirect("Home" + viewName[i]);
                     }
                 }

@@ -130,8 +130,51 @@ GO
 
 CREATE PROC dropAllProceduresFunctionsViews
 AS
+	DROP PROC addAssociationManager;
 	DROP PROC createAllTables;
 	DROP PROC dropAllTables;
+	DROP PROC dropAllProceduresFunctionsViews;
+	DROP PROC clearAllTables;
+	DROP VIEW allAssocManagers;
+	DROP VIEW allClubRepresentatives;
+	DROP VIEW allStadiumManagers;
+	DROP VIEW allFans;
+	DROP VIEW allMatches;
+	DROP VIEW allTickets;
+	DROP VIEW allCLubs;
+	DROP VIEW allStadiums;
+	DROP VIEW allRequests;
+	DROP PROC addNewMatch;
+	DROP VIEW clubsWithNoMatches;
+	DROP PROC deleteMatch;
+	DROP PROC deleteMatchesOnStadium;
+	DROP PROC addClub;
+	DROP PROC addTicket;
+	DROP PROC deleteClub;
+	DROP PROC addStadium;
+	DROP PROC deleteStadium;
+	DROP PROC blockFan;
+	DROP PROC unblockFan;
+	DROP PROC addRepresentative;
+	DROP FUNCTION viewAvailableStadiumsOn;
+	DROP PROC addHostRequest;
+	DROP FUNCTION allUnassignedMatches;
+	DROP PROC addStadiumManager;
+	DROP FUNCTION allPendingRequests;
+	DROP PROC acceptRequest;
+	DROP PROC rejectRequest;
+	DROP PROC addFan;
+	DROP FUNCTION upcomingMatchesOfClub;
+	DROP FUNCTION availableMatchesToAttend;
+	DROP PROC purchaseTicket;
+	DROP PROC updateMatchTiming;
+	DROP VIEW matchesPerTeam;
+	DROP PROC deleteMatchesOn;
+	DROP VIEW matchWithMostSoldTickets;
+	DROP VIEW matchesRankedBySoldTickets;
+	DROP PROC clubWithTheMostSoldTickets;
+	DROP VIEW clubsRankedBySoldTickets;
+	DROP FUNCTION stadiumsNeverPlayedOn;
 GO
 
 --Tested
@@ -336,7 +379,7 @@ CREATE PROC addRepresentative
     @password VARCHAR(20)
 AS
     INSERT INTO Sys_user VALUES (@username, @password)
-    INSERT INTO Club_rep VALUES (@name, (SELECT club_id FROM Club WHERE name = @club_name), @username)
+    INSERT INTO Club_rep VALUES (@name, (SELECT top 1 club_id FROM Club WHERE name = @club_name), @username)
 GO
 
 CREATE FUNCTION [viewAvailableStadiumsOn]
@@ -426,6 +469,7 @@ CREATE PROC addFan
     @phone_no INT
 AS
     INSERT INTO Sys_user VALUES (@username , @password)
+	WAITFOR DELAY '00:02'
     INSERT INTO Fan VALUES (@national_id , @name , @birth_date , @address , @phone_no , 1, @username)
 GO
 
@@ -440,6 +484,7 @@ RETURN(
         INNER JOIN Stadium s ON m.stadium_id = s.id
         WHERE m.start_time > CURRENT_TIMESTAMP AND c.name = @name)
 GO
+
 
 CREATE FUNCTION availableMatchesToAttend
 (@date DATETIME)
@@ -464,9 +509,10 @@ AS
 						AND host_club_id = (SELECT club_id FROM Club WHERE name = @host_club_name) 
 						AND guest_club_id = (SELECT club_id FROM Club WHERE name = @guest_club_name))
 
-	UPDATE Ticket_buying_transaction
-	SET status = 1
-	WHERE fan_national_id = @national_id
+	INSERT INTO Ticket_buying_transaction VALUES (@national_id, (SELECT id FROM Ticket
+    WHERE match_id = (SELECT M.match_id FROM Match M WHERE start_time = @start_time
+						AND host_club_id = (SELECT club_id FROM Club WHERE name = @host_club_name) 
+						AND guest_club_id = (SELECT club_id FROM Club WHERE name = @guest_club_name))))
 GO
 
 CREATE PROC updateMatchTiming
@@ -510,15 +556,16 @@ WHERE Match.host_club_id = C1.club_id AND Match.guest_club_id = C2.club_id AND M
 GO
 
 CREATE VIEW matchesRankedBySoldTickets AS
-SELECT C1.name as Home, C2.name as Guests, Q.ticketCount
-FROM Club C1, Club C2, (
-	SELECT M.match_id, M.host_club_id as HC, M.guest_club_id as GC, COUNT(T1.id) AS ticketCount
-	FROM Ticket T1, Match M, Ticket_buying_transaction as T2
-	WHERE T1.match_id = M.match_id AND T1.id = T2.ticket_id
-	GROUP BY M.match_id, M.host_club_id, M.guest_club_id
-) AS Q
-WHERE C1.club_id = Q.HC AND C2.club_id = Q.GC
-ORDER BY Q.ticketCount DESC
+	SELECT C1.name as "Home", C2.name as "Guests", Q.ticketCount
+	FROM Club C1, Club C2, (
+		SELECT M.match_id, M.host_club_id as HC, M.guest_club_id as GC, COUNT(T1.id) AS ticketCount
+		FROM Ticket T1, Match M, Ticket_buying_transaction as T2
+		WHERE T1.match_id = M.match_id AND T1.id = T2.ticket_id
+		GROUP BY M.match_id, M.host_club_id, M.guest_club_id
+	) AS Q
+	WHERE C1.club_id = Q.HC AND C2.club_id = Q.GC
+	ORDER BY Q.ticketCount DESC
+	OFFSET 0 ROWS
 GO
 
 CREATE PROC clubWithTheMostSoldTickets
@@ -536,13 +583,14 @@ GO
 
 CREATE VIEW clubsRankedBySoldTickets
 AS
-    SELECT C.name, COUNT(T)
+    SELECT C.name, COUNT(T.id) NumTickets
     FROM Club C
     INNER JOIN Match M ON (M.host_club_id = C.club_id OR M.guest_club_id = C.club_id)
     INNER JOIN Ticket T ON T.match_id = M.match_id
     WHERE M.end_time < CURRENT_TIMESTAMP
     GROUP BY C.name
-    ORDER BY COUNT(T) DESC
+    ORDER BY COUNT(T.id) DESC
+	OFFSET 0 ROWS
 GO
 
 CREATE FUNCTION stadiumsNeverPlayedOn

@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.Configuration;
 using System.Text;
+using System.Threading;
 
 namespace FMNY
 {
@@ -26,7 +27,7 @@ namespace FMNY
             // Create a connection
             SqlConnection conn = new SqlConnection(connStr);
 
-            string name = delStadiumName.Text;
+            string name = delClubName.Text;
 
             SqlCommand delClubProc = new SqlCommand("deleteClub", conn);
             delClubProc.CommandType = CommandType.StoredProcedure;
@@ -54,7 +55,7 @@ namespace FMNY
             addClubProc.Parameters.Add(new SqlParameter("@location", location));
 
             conn.Open();
-            addClubProc.ExecuteNonQuery();
+            addClubProc.ExecuteNonQuery(); Thread.Sleep(500);
             conn.Close();
 
             Response.Write("Added Club " + name);
@@ -144,6 +145,7 @@ namespace FMNY
 
         private void BuildTable(string query, PlaceHolder p)
         {
+            Thread.Sleep(1000);
             //Populating a DataTable from database.
             DataTable dt = this.GetData(query);
 

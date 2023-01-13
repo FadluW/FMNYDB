@@ -16,6 +16,7 @@
             <asp:TextBox ID="password" runat="server"></asp:TextBox>
             <br />
             <asp:Button ID="loginButton" OnClick="login" runat="server" Text="Login" />
+            <a href="Registration.aspx">Register<a>
         </div>
     </form>
 </body>

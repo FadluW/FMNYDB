@@ -8,7 +8,7 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
+        <div align="center">
             Please Log In <br /> <br />
             Username <br />
             <asp:TextBox ID="username" runat="server"></asp:TextBox> <br />

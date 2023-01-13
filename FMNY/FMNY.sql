@@ -137,131 +137,18 @@ GO
 --Tested
 CREATE PROC clearAllTables
 AS
-	DROP TABLE Host_req;
-	DROP TABLE Ticket_buying_transaction;
-	DROP TABLE Ticket;
-	DROP TABLE Match;
-	DROP TABLE Fan;
-	DROP TABLE Stadium_manager;
-	DROP TABLE Club_rep;
-	DROP TABLE Stadium;
-	DROP TABLE Club;
-	DROP TABLE Sports_assoc_manager;
-	DROP TABLE Sys_admin;
-	DROP TABLE Sys_user;
-	CREATE TABLE Sys_user(
-		username VARCHAR(20),
-		password VARCHAR(20),
-		PRIMARY KEY(username)
-	);
-
-	CREATE TABLE Sys_admin(
-		id INT IDENTITY,
-		name VARCHAR(20),
-		username VARCHAR(20),
-		PRIMARY KEY(id),
-		FOREIGN KEY(username) REFERENCES Sys_user(username)
-	);
-
-	CREATE TABLE Sports_assoc_manager(
-		id INT IDENTITY,
-		name VARCHAR(20),
-		username VARCHAR(20),
-		PRIMARY KEY(id),
-		FOREIGN KEY(username) REFERENCES Sys_user(username)
-	);
-
-	CREATE TABLE Club(
-		club_id INT IDENTITY,
-		name VARCHAR(20),
-		location VARCHAR(20),
-		PRIMARY KEY(club_id)
-	);
-
-	CREATE TABLE Stadium(
-		id INT IDENTITY,
-		name VARCHAR(20),
-		location VARCHAR(20),
-		capacity INT,
-		status BIT,
-		PRIMARY KEY(id)
-	);
-
-	CREATE TABLE Club_rep(
-		id INT IDENTITY,
-		name VARCHAR(20),
-		club_id INT,
-		username VARCHAR(20),
-		PRIMARY KEY(id),
-		FOREIGN KEY(club_id) REFERENCES Club(club_id),
-		FOREIGN KEY(username) REFERENCES Sys_user(username) 
-	);
-
-	CREATE TABLE Stadium_manager(
-		id INT IDENTITY,
-		name VARCHAR(20),
-		stadium_id INT,
-		username VARCHAR(20),
-		PRIMARY KEY(id),
-		FOREIGN KEY(stadium_id) REFERENCES Stadium(id),
-		FOREIGN KEY(username) REFERENCES Sys_user(username)
-	);
-
-	CREATE TABLE Fan(
-		national_id VARCHAR(20),
-		name VARCHAR(20),
-		birth_date DATE,
-		street VARCHAR(20),
-		house_no INT,
-		postal_code INT,
-		city VARCHAR(20),
-		country VARCHAR(20),
-		phone_no VARCHAR(20),
-		status BIT,
-		username VARCHAR(20),
-		PRIMARY KEY(national_id),
-		FOREIGN KEY(username) REFERENCES Sys_user(username)
-	);
-
-	CREATE TABLE Match(
-		match_id INT IDENTITY(0,2),
-		start_time DATETIME,
-		end_time DATETIME,
-		host_club_id INT,
-		guest_club_id INT,
-		stadium_id INT,
-		PRIMARY KEY(match_id),
-		FOREIGN KEY(host_club_id) REFERENCES Club(club_id),
-		FOREIGN KEY(guest_club_id) REFERENCES Club(club_id),
-		FOREIGN KEY(stadium_id) REFERENCES Stadium(id) 
-	);
-
-	CREATE TABLE Ticket(
-		id INT IDENTITY,
-		status BIT,
-		match_id INT,
-		PRIMARY KEY(id),
-		FOREIGN KEY(match_id) REFERENCES Match(match_id)
-	);
-
-	CREATE TABLE Ticket_buying_transaction(
-		fan_national_id VARCHAR(20),
-		ticket_id INT,
-		FOREIGN KEY(fan_national_id) REFERENCES Fan(national_id),
-		FOREIGN KEY(ticket_id) REFERENCES Ticket(id)
-	);
-
-	CREATE TABLE Host_req(
-		id INT IDENTITY,
-		rep_id INT,
-		manager_id INT,
-		match_id INT,
-		status BIT,
-		PRIMARY KEY(id),
-		FOREIGN KEY(rep_id) REFERENCES Club_rep(id),
-		FOREIGN KEY(manager_id) REFERENCES Stadium_manager(id),
-		FOREIGN KEY(match_id) REFERENCES Match(match_id)
-	);
+	DELETE FROM Host_req;
+	DELETE FROM Ticket_buying_transaction;
+	DELETE FROM Ticket;
+	DELETE FROM Match;
+	DELETE FROM Fan;
+	DELETE FROM Stadium_manager;
+	DELETE FROM Club_rep;
+	DELETE FROM Stadium;
+	DELETE FROM Club;
+	DELETE FROM Sports_assoc_manager;
+	DELETE FROM Sys_admin;
+	DELETE FROM Sys_user;
 GO
 
 --tested
@@ -342,8 +229,8 @@ CREATE PROC addAssociationManager
 	@username VARCHAR(20),
 	@password VARCHAR(20)
 AS
-	INSERT INTO Sports_assoc_manager VALUES (@name, @username)
 	INSERT INTO Sys_user VALUES (@username, @password)
+	INSERT INTO Sports_assoc_manager VALUES (@name, @username)
 GO
 
 CREATE PROC addNewMatch
@@ -486,8 +373,8 @@ CREATE PROC addStadiumManager
     @username VARCHAR(20),
     @password VARCHAR(20)
 AS
-    INSERT INTO Stadium_manager VALUES (@name ,(SELECT id FROM Stadium WHERE name = @stadium_name) , @username)
     INSERT INTO Sys_user VALUES (@username , @password)
+    INSERT INTO Stadium_manager VALUES (@name ,(SELECT id FROM Stadium WHERE name = @stadium_name) , @username)
 GO
 
 CREATE FUNCTION allPendingRequests
@@ -538,8 +425,8 @@ CREATE PROC addFan
     @address VARCHAR(20),
     @phone_no INT
 AS
-    INSERT INTO Fan VALUES (@national_id , @name , @birth_date , @address , @phone_no , 1, @username)
     INSERT INTO Sys_user VALUES (@username , @password)
+    INSERT INTO Fan VALUES (@national_id , @name , @birth_date , @address , @phone_no , 1, @username)
 GO
 
 CREATE FUNCTION upcomingMatchesOfClub

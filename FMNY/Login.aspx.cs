@@ -26,13 +26,19 @@ namespace FMNY
             string user = username.Text;
             string pass = password.Text;
 
-            SqlCommand viewAssoc = new SqlCommand("SELECT su.username, su.password, sm.name \r\n\tFROM Sports_assoc_manager AS sm \r\n\tINNER JOIN Sys_user AS su ON sm.username = su.username", conn);
-            SqlCommand viewFan = new SqlCommand("allFans", conn);
-            SqlCommand viewClubRep = new SqlCommand("SELECT su.username, su.password, cr.name AS club_rep_name, c.name AS club_name\r\n\tFROM Sys_user AS su\r\n\tINNER JOIN Club_rep AS cr ON su.username = cr.username\r\n\tINNER JOIN Club AS c ON cr.club_id = c.club_id", conn);
-            SqlCommand viewStadiumMan = new SqlCommand("SELECT su.username, su.password, sm.name AS stadium_manager_name, s.name AS stadium_name\r\n\tFROM Sys_user AS su\r\n\tINNER JOIN Stadium_manager AS sm ON su.username = sm.username\r\n\tINNER JOIN Stadium AS s ON sm.stadium_id = s.id", conn);
+            // Admin login
+            if (user.Equals("admin") && pass.Equals("admin"))
+            {
+                Response.Redirect("HomeAdmin.aspx");
+            }
+
+            SqlCommand viewAssoc = new SqlCommand("SELECT * FROM allAssocManagers", conn);
+            SqlCommand viewFan = new SqlCommand("SELECT * FROM allFans", conn);
+            SqlCommand viewClubRep = new SqlCommand("SELECT * FROM  allClubRepresentatives", conn);
+            SqlCommand viewStadiumMan = new SqlCommand("SELECT * FROM allStadiumManagers", conn);
 
             SqlCommand[] views = { viewAssoc, viewFan, viewClubRep, viewStadiumMan };
-            string[] viewName = { "assocMan", "fan", "clubRep", "stadiumMan"};
+            string[] viewName = { "AssocMan", "Fan", "ClubRep", "StadiumMan"};
 
             // Iterate over each view separately
             Boolean found = false;
@@ -48,7 +54,7 @@ namespace FMNY
                     // If user found
                     if (user.Equals(currUser) && pass.Equals(currPass)) {
                         found = true;
-                        Response.Redirect("home/" + viewName[i] );
+                        Response.Redirect("Home" + viewName[i]);
                     }
                 }
                 rdr.Close();

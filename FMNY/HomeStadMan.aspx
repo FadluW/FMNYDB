@@ -9,6 +9,7 @@
 <body>
     <form id="form1" runat="server">
         <div>
+            <asp:PlaceHolder ID="StadiumInfo" runat="server"></asp:PlaceHolder>
             <asp:PlaceHolder ID="Requests" runat="server"></asp:PlaceHolder>
         </div>
     </form>

@@ -8,16 +8,18 @@ using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml.Linq;
+using System.Text;
+using System.Threading;
 
 namespace FMNY
 {
-    public partial class stadiumMan : System.Web.UI.Page
+    public partial class HomeStadMan : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            viewStadiumInfo();
+            if (Session["username"] == null || !Session["userType"].Equals("StadMan")) Response.Redirect("Login.aspx");
         }
-        protected void viewStadiumInfo()
+        protected void viewStadiumInfo(object sender, EventArgs e)
         {
             if (Session["username"] == null || !Session["userType"].Equals("StadiumMan")) { Response.Redirect("Login.aspx"); }
 
@@ -30,7 +32,6 @@ namespace FMNY
 
             SqlCommand viewStadiumMan = new SqlCommand("SELECT * FROM allStadiumManagers", conn);
             SqlCommand viewStadium = new SqlCommand("SELECT * FROM allStadiums", conn);
-            SqlCommand viewReq = new SqlCommand("SELECT * FROM allRequests", conn);
 
 
             SqlDataReader rdr = viewStadiumMan.ExecuteReader(CommandBehavior.CloseConnection);
@@ -48,39 +49,73 @@ namespace FMNY
             }
             rdr.Close();
 
-            if (!found) Response.Write("Stadium Manager Not Found");
+            if (!found) Response.Write("Stadium Manager's Stadium Not Found");
 
-            SqlDataReader rdr2 = viewStadium.ExecuteReader(CommandBehavior.CloseConnection);
+            
+            BuildTable("SELECT * FROM allStadiums WHERE name = " + stad_name, Requests);
 
-            found = false;
-            while (rdr2.Read() && !found)
+            BuildTable("SELECT * FROM allRequests WHERE stadium_manager_username = " + Session["username"], StadiumInfo);
+        }
+        private DataTable GetData(string query)
+        {
+            string constr = WebConfigurationManager.ConnectionStrings["FMNY"].ToString();
+            using (SqlConnection conn = new SqlConnection(constr))
             {
-                string currName = rdr2.GetString(rdr2.GetOrdinal("name"));
-
-                if (stad_name.Equals(currName))
+                using (SqlCommand cmd = new SqlCommand(query))
                 {
-                    found = true;
-                    //DISPLAY THE RESULTED TABLE
+                    using (SqlDataAdapter sda = new SqlDataAdapter())
+                    {
+                        cmd.Connection = conn;
+                        sda.SelectCommand = cmd;
+                        using (DataTable dt = new DataTable())
+                        {
+                            sda.Fill(dt);
+                            return dt;
+                        }
+                    }
                 }
             }
-            rdr2.Close();
+        }
 
-            if (!found) Response.Write("Stadium Not Found");
+        private void BuildTable(string query, PlaceHolder p)
+        {
+            //Populating a DataTable from database.
+            DataTable dt = this.GetData(query);
 
-            SqlDataReader rdr3 = viewReq.ExecuteReader(CommandBehavior.CloseConnection);
+            //Building an HTML string.
+            StringBuilder html = new StringBuilder();
 
-            found = false;
-            while (rdr3.Read() && !found)
+            //Table start.
+            html.Append("<table border = '1'>");
+
+            //Building the Header row.
+            html.Append("<tr>");
+            foreach (DataColumn column in dt.Columns)
             {
-                string SMUser = rdr3.GetString(rdr3.GetOrdinal("stadium_manager_username"));
-
-                if (Session["username"].Equals(SMUser))
-                {
-                    found = true;
-                    //DISPLAY THE RESULTED TABLE
-                }
+                html.Append("<th>");
+                html.Append(column.ColumnName);
+                html.Append("</th>");
             }
-            rdr3.Close();
+            html.Append("</tr>");
+
+            //Building the Data rows.
+            foreach (DataRow row in dt.Rows)
+            {
+                html.Append("<tr>");
+                foreach (DataColumn column in dt.Columns)
+                {
+                    html.Append("<td>");
+                    html.Append(row[column.ColumnName]);
+                    html.Append("</td>");
+                }
+                html.Append("</tr>");
+            }
+
+            //Table end.
+            html.Append("</table>");
+
+            //Append the HTML string to Placeholder.
+            p.Controls.Add(new Literal { Text = html.ToString() });
         }
     }
 }

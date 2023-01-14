@@ -15,6 +15,53 @@ namespace FMNY
 {
     public partial class HomeClubRep : System.Web.UI.Page
     {
+        protected void addRequest(object sender, EventArgs e)
+        {
+            string connStr = WebConfigurationManager.ConnectionStrings["FMNY"].ToString();
+            // Create a connection
+            SqlConnection conn = new SqlConnection(connStr);
+
+            string hostName = host.Text;
+            string stadiumName = stadium.Text;
+            int day = Int32.Parse(matchDayR.Text);
+            int month = Int32.Parse(matchMonthR.Text);
+            int year = Int32.Parse(matchYearR.Text);
+            int startHour = Int32.Parse(matchH.Text);
+            int startMin = Int32.Parse(matchM.Text);
+
+            // Validation
+            if (year < 1 || year > 2023)
+            {
+                Response.Write("Incorrect Year");
+                return;
+            }
+            if (month < 1 || month > 12)
+            {
+                Response.Write("Incorrect Month");
+                return;
+            }
+            if (day < 1 || day > DateTime.DaysInMonth(year, month))
+            {
+                Response.Write("Incorrect Day");
+                return;
+            }
+            if (startHour < 0 || startHour > 23 || startMin < 0 || startMin > 59 )
+            {
+                Response.Write("Incorrect Time");
+                return;
+            }
+            DateTime startTime = new DateTime(year, month, day, startHour, startMin, 0);
+
+            SqlCommand addRequest = new SqlCommand("addHostRequest", conn);
+            addRequest.CommandType = CommandType.StoredProcedure;
+            addRequest.Parameters.Add(new SqlParameter("@club_name", hostName));
+            addRequest.Parameters.Add(new SqlParameter("@stadium_name", stadiumName));
+            addRequest.Parameters.Add(new SqlParameter("@start_time", startTime));
+
+            conn.Open();
+            addRequest.ExecuteNonQuery();
+            conn.Close();
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["username"] == null || !Session["userType"].Equals("ClubRep")) { Response.Redirect("Login.aspx"); }
@@ -31,9 +78,14 @@ namespace FMNY
 
             SqlCommand getName = new SqlCommand(clubQuery, conn);
             SqlDataReader rdr = getName.ExecuteReader(CommandBehavior.CloseConnection);
-            string clubName = "";
             rdr.Read();
-            clubName = rdr.GetString(rdr.GetOrdinal("name"));
+            string clubName = "";
+            try
+            {
+                clubName = rdr.GetString(rdr.GetOrdinal("name"));
+            } catch { 
+            
+            }
 
             if (clubName != "")
             {
@@ -91,7 +143,6 @@ namespace FMNY
 
         private void BuildTable(string query, PlaceHolder p)
         {
-            Thread.Sleep(1000);
             //Populating a DataTable from database.
             DataTable dt = this.GetData(query);
 

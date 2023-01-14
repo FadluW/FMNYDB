@@ -70,9 +70,11 @@
     <Content Include="FMNY.sql" />
     <Content Include="HomeAdmin.aspx" />
     <Content Include="HomeClubRep.aspx" />
+    <Content Include="HomeFan.aspx" />
     <Content Include="HomeStadMan.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Registration.aspx" />
+    <Content Include="HomeSportsAssocMan.aspx" />
     <Content Include="startClean.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -90,6 +92,13 @@
     </Compile>
     <Compile Include="HomeClubRep.aspx.designer.cs">
       <DependentUpon>HomeClubRep.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="HomeFan.aspx.cs">
+      <DependentUpon>HomeFan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HomeFan.aspx.designer.cs">
+      <DependentUpon>HomeFan.aspx</DependentUpon>
     </Compile>
     <Compile Include="HomeStadMan.aspx.cs">
       <DependentUpon>HomeStadMan.aspx</DependentUpon>
@@ -112,6 +121,13 @@
     </Compile>
     <Compile Include="Registration.aspx.designer.cs">
       <DependentUpon>Registration.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="HomeSportsAssocMan.aspx.cs">
+      <DependentUpon>HomeSportsAssocMan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HomeSportsAssocMan.aspx.designer.cs">
+      <DependentUpon>HomeSportsAssocMan.aspx</DependentUpon>
     </Compile>
     <Compile Include="startClean.aspx.cs">
       <DependentUpon>startClean.aspx</DependentUpon>

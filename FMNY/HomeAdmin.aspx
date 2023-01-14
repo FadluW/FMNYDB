@@ -61,11 +61,15 @@
                         <table>
                             <tr><td>Block Fan</td></tr>
                             <tr><td>
-                                <asp:TextBox ID="blockFanID" runat="server" ToolTip="National ID"></asp:TextBox> <br /><br /><br />
+                                <asp:TextBox ID="blockFanID" runat="server" ToolTip="National ID"></asp:TextBox> <br />
                                 <asp:Button ID="blockFanButton" OnClick="blockFan" runat="server" Text="Block" />
+                                <asp:Button ID="unblockFanButton" OnClick="unblockFan" runat="server" Text="Unblock" />
                             </td></tr>
                         </table>
                     </td>
+                </tr>
+                <tr>
+                    <asp:Button ID="Reload" OnClick="reloadTables" runat="server" Text="View Tables" />
                 </tr>
                 <tr>
                     <asp:PlaceHolder ID="Clubs" runat="server"></asp:PlaceHolder>

@@ -33,15 +33,6 @@ namespace FMNY
         protected global::System.Web.UI.WebControls.PlaceHolder ClubInfo;
 
         /// <summary>
-        /// UpcomingMatches control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder UpcomingMatches;
-
-        /// <summary>
         /// matchDay control.
         /// </summary>
         /// <remarks>
@@ -78,6 +69,78 @@ namespace FMNY
         protected global::System.Web.UI.WebControls.Button viewMatchesButton;
 
         /// <summary>
+        /// host control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox host;
+
+        /// <summary>
+        /// stadium control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox stadium;
+
+        /// <summary>
+        /// matchH control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox matchH;
+
+        /// <summary>
+        /// matchM control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox matchM;
+
+        /// <summary>
+        /// matchDayR control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox matchDayR;
+
+        /// <summary>
+        /// matchMonthR control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox matchMonthR;
+
+        /// <summary>
+        /// matchYearR control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox matchYearR;
+
+        /// <summary>
+        /// Button1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Button1;
+
+        /// <summary>
         /// availableStadiums control.
         /// </summary>
         /// <remarks>
@@ -85,5 +148,23 @@ namespace FMNY
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder availableStadiums;
+
+        /// <summary>
+        /// UpcomingMatches control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder UpcomingMatches;
+
+        /// <summary>
+        /// requestTable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder requestTable;
     }
 }

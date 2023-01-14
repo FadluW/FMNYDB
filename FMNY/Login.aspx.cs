@@ -29,6 +29,8 @@ namespace FMNY
             // Admin login
             if (user.Equals("admin") && pass.Equals("admin"))
             {
+                Session["username"] = "admin";
+                Session["userType"] = "Admin";
                 Response.Redirect("HomeAdmin.aspx");
             }
 

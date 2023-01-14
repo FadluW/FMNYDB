@@ -19,6 +19,107 @@ namespace FMNY
         {
             if (Session["username"] == null || !Session["userType"].Equals("StadMan")) Response.Redirect("Login.aspx");
         }
+
+        protected void acceptRequest(object sender, EventArgs e)
+        {
+            string connStr = WebConfigurationManager.ConnectionStrings["FMNY"].ToString();
+            // Create a connection
+            SqlConnection conn = new SqlConnection(connStr);
+
+            string username = Session["username"].ToString();
+            string hostName = host.Text;
+            string guestName = guest.Text;
+            int day = Int32.Parse(MatchDay.Text);
+            int month = Int32.Parse(MatchMonth.Text);
+            int year = Int32.Parse(MatchYear.Text);
+            int startHour = Int32.Parse(startH.Text);
+            int startMin = Int32.Parse(startT.Text);
+
+            if (year < 1 || year > 2023)
+            {
+                Response.Write("Incorrect Year");
+                return;
+            }
+            if (month < 1 || month > 12)
+            {
+                Response.Write("Incorrect Month");
+                return;
+            }
+            if (day < 1 || day > DateTime.DaysInMonth(year, month))
+            {
+                Response.Write("Incorrect Day");
+                return;
+            }
+            if (startHour < 0 || startHour > 23 || startMin < 0 || startMin > 59)
+            {
+                Response.Write("Incorrect Time");
+                return;
+            }
+
+            DateTime startTime = new DateTime(year, month, day, startHour, startMin, 0);
+
+            SqlCommand acceptRequest = new SqlCommand("acceptRequest", conn);
+            acceptRequest.CommandType = CommandType.StoredProcedure;
+            acceptRequest.Parameters.Add(new SqlParameter("@username", username));
+            acceptRequest.Parameters.Add(new SqlParameter("@host_club_name", hostName));
+            acceptRequest.Parameters.Add(new SqlParameter("@guest_club_name", guestName));
+            acceptRequest.Parameters.Add(new SqlParameter("@start_time", startTime));
+
+            conn.Open();
+            acceptRequest.ExecuteNonQuery();
+            conn.Close();
+        }
+
+        protected void rejectRequest(object sender, EventArgs e)
+        {
+            string connStr = WebConfigurationManager.ConnectionStrings["FMNY"].ToString();
+            // Create a connection
+            SqlConnection conn = new SqlConnection(connStr);
+
+            string username = Session["username"].ToString();
+            string hostName = host.Text;
+            string guestName = guest.Text;
+            int day = Int32.Parse(MatchDay.Text);
+            int month = Int32.Parse(MatchMonth.Text);
+            int year = Int32.Parse(MatchYear.Text);
+            int startHour = Int32.Parse(startH.Text);
+            int startMin = Int32.Parse(startT.Text);
+
+            if (year < 1 || year > 2023)
+            {
+                Response.Write("Incorrect Year");
+                return;
+            }
+            if (month < 1 || month > 12)
+            {
+                Response.Write("Incorrect Month");
+                return;
+            }
+            if (day < 1 || day > DateTime.DaysInMonth(year, month))
+            {
+                Response.Write("Incorrect Day");
+                return;
+            }
+            if (startHour < 0 || startHour > 23 || startMin < 0 || startMin > 59)
+            {
+                Response.Write("Incorrect Time");
+                return;
+            }
+
+            DateTime startTime = new DateTime(year, month, day, startHour, startMin, 0);
+
+            SqlCommand rejectRequest = new SqlCommand("rejectRequest", conn);
+            rejectRequest.CommandType = CommandType.StoredProcedure;
+            rejectRequest.Parameters.Add(new SqlParameter("@username", username));
+            rejectRequest.Parameters.Add(new SqlParameter("@host_club_name", hostName));
+            rejectRequest.Parameters.Add(new SqlParameter("@guest_club_name", guestName));
+            rejectRequest.Parameters.Add(new SqlParameter("@start_time", startTime));
+
+            conn.Open();
+            rejectRequest.ExecuteNonQuery();
+            conn.Close();
+        }
+
         protected void viewStadiumInfo(object sender, EventArgs e)
         {
             if (Session["username"] == null || !Session["userType"].Equals("StadiumMan")) { Response.Redirect("Login.aspx"); }
@@ -31,7 +132,6 @@ namespace FMNY
             String stad_name = "";
 
             SqlCommand viewStadiumMan = new SqlCommand("SELECT * FROM allStadiumManagers", conn);
-            SqlCommand viewStadium = new SqlCommand("SELECT * FROM allStadiums", conn);
 
 
             SqlDataReader rdr = viewStadiumMan.ExecuteReader(CommandBehavior.CloseConnection);

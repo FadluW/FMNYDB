@@ -15,10 +15,14 @@ namespace FMNY
 {
     public partial class HomeAdmin : System.Web.UI.Page
     {
-        protected void Page_Load(object sender, EventArgs e)
+        protected void reloadTables(object sender, EventArgs e)
         {
             BuildTable("SELECT * FROM allClubs", Clubs);
             BuildTable("SELECT * FROM allStadiums", Stadiums);
+        }
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (Session["userType"] == null || !Session["userType"].Equals("Admin")) Response.Redirect("Login.aspx");
         }
 
         protected void delClub(object sender, EventArgs e)
@@ -122,6 +126,25 @@ namespace FMNY
             Response.Write("Blocked Fan " + ID);
         }
 
+        protected void unblockFan(object sender, EventArgs e)
+        {
+            string connStr = WebConfigurationManager.ConnectionStrings["FMNY"].ToString();
+            // Create a connection
+            SqlConnection conn = new SqlConnection(connStr);
+
+            string ID = blockFanID.Text;
+
+            SqlCommand unblockFanProc = new SqlCommand("unblockFan", conn);
+            unblockFanProc.CommandType = CommandType.StoredProcedure;
+            unblockFanProc.Parameters.Add(new SqlParameter("@national_id", ID));
+
+            conn.Open();
+            unblockFanProc.ExecuteNonQuery();
+            conn.Close();
+
+            Response.Write("Unblocked Fan " + ID);
+        }
+
         private DataTable GetData(string query)
         {
             string constr = WebConfigurationManager.ConnectionStrings["FMNY"].ToString();
@@ -145,7 +168,6 @@ namespace FMNY
 
         private void BuildTable(string query, PlaceHolder p)
         {
-            Thread.Sleep(1000);
             //Populating a DataTable from database.
             DataTable dt = this.GetData(query);
 

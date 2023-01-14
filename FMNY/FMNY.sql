@@ -603,3 +603,43 @@ AS
     LEFT OUTER JOIN Club C ON M.host_club_id = C.club_id OR M.guest_club_id = C.club_id
     WHERE C.name = @name AND M.host_club_id = NULL OR M.host_club_id = NULL)
 GO  
+
+CREATE PROC fanMatches
+@start_time DATETIME
+AS
+	SELECT c1.name AS host_club, c2.name AS guest_club, s.name AS stadium_name, s.location 
+	FROM Match AS m 
+	INNER JOIN Ticket AS t ON m.match_id = t.match_id
+	INNER JOIN Club AS c1 ON m.host_club_id = c1.club_id
+	INNER JOIN Club AS c2 ON m.guest_club_id = c2.club_id
+	INNER JOIN Stadium AS s ON m.stadium_id = s.id
+	WHERE t.status = 1
+GO
+
+CREATE VIEW upcomingMatches 
+AS
+	SELECT c1.name AS host_club, c2.name AS guest_club, m.start_time, m.end_time
+	FROM Match AS m 
+	INNER JOIN Club AS c1 ON m.host_club_id = c1.club_id
+	INNER JOIN Club AS c2 ON m.guest_club_id = c2.club_id
+	WHERE m.start_time > CURRENT_TIMESTAMP
+GO
+
+CREATE VIEW playedMatches
+AS
+	SELECT c1.name AS host_club, c2.name AS guest_club, m.start_time, m.end_time
+	FROM Match AS m 
+	INNER JOIN Club AS c1 ON m.host_club_id = c1.club_id
+	INNER JOIN Club AS c2 ON m.guest_club_id = c2.club_id
+	WHERE m.end_time < CURRENT_TIMESTAMP
+GO
+
+CREATE VIEW neverPlayed
+AS
+	SELECT C.name AS Club1, C2.name AS Club2 
+	FROM Club C, Club C2 
+	WHERE C.club_id>C2.club_id AND NOT EXISTS
+			((SELECT * FROM Match M INNER JOIN Club C3 ON M.host_club_id = C3.club_id INNER JOIN Club C4 ON C4.club_id = M.guest_club_id WHERE C3.club_id<>C4.club_id AND C3.club_id=C.club_id and C4.club_id=C2.club_id AND M.start_time<CURRENT_TIMESTAMP) 
+			UNION 
+			(SELECT * FROM Match M INNER JOIN Club C3 ON M.guest_club_id = C3.club_id INNER JOIN Club C4 ON C4.club_id = M.host_club_id WHERE C3.club_id<>C4.club_id AND C3.club_id=C.club_id and C4.club_id=C2.club_id AND M.start_time<CURRENT_TIMESTAMP))
+GO

@@ -150,6 +150,24 @@ namespace FMNY
         protected global::System.Web.UI.WebControls.Button blockFanButton;
 
         /// <summary>
+        /// unblockFanButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button unblockFanButton;
+
+        /// <summary>
+        /// Reload control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Reload;
+
+        /// <summary>
         /// Clubs control.
         /// </summary>
         /// <remarks>
